@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
+//contexti testimiseks
+import { useUser } from "../../components/users/user-context";
+
+
 //const router = useRouter();
 //router.refresh();
-
 export default function ClientTodo() {
+   const { user, loading } = useUser(); // Access user context
     const [todos, setTodos] = useState<any[] | null>([]);
     const [newTodo, setNewTodo] = useState(""); // For new TODO title
     const [newPriority, setNewPriority] = useState("");
@@ -50,7 +54,6 @@ export default function ClientTodo() {
         const { data, error } = await supabase
             .from('todos')
             .update({ title: updatedTodo, priority: updatedPriority })
-            
             .eq('id', id);
 
         if (!error) {
@@ -137,7 +140,19 @@ export default function ClientTodo() {
                         className="border border-gray-400 p-1"
                     />
                     <Button onClick={insertTodo}>Insert todo</Button>
+
+                  {/* user contexti kontroll, töötab :)) */}
+                    <div className="my-4 text-center">
+                     {loading ? (
+                        <p>Loading user info...</p>
+                     ) : user ? (
+                        <p>Logged in as: {user.email}</p>
+                     ) : (
+                        <p>No user is logged in</p>
+                     )}
+                  </div>
                 </div>
+                      
             </main>
         </>
     );
